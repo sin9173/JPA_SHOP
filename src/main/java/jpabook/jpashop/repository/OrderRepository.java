@@ -105,4 +105,47 @@ public class OrderRepository {
     }
 
 
+    //Fetch 조인 조회
+    public List<Order> findAllByWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        //fetch 조인 : JPQL 에서 성능최적화를 위해 제공하는 기능
+                        // - 연관된 엔티티 또는 컬렉션을 한번의 SQL 로 가져옴
+                        // - LAZY 보다도 우선됨
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        ).getResultList();
+    }
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                //distinct 가 있을 경우 JPA 에서 같은 아이디값이 있을 경우 중복을 제거 해줌 (실제로는 여러개가 조회됨)
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" + //join 특성상 같은 주문데이터가 여러개가 생김
+                        " join fetch oi.item i", Order.class
+        ).getResultList();
+    }
+
+    public List<Order> findAllByWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                "select o from Order o" +
+                        //fetch 조인 : JPQL 에서 성능최적화를 위해 제공하는 기능
+                        // - 연관된 엔티티 또는 컬렉션을 한번의 SQL 로 가져옴
+                        // - LAZY 보다도 우선됨
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        ).setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    // 1:N 을 fetch 조인시 firstResult/maxResults (페이징쿼리) 가 실제 쿼리에 반영이 되지 않음
+    // - 데이터를 모두 가져온 후 메모리상에서 페이징을 수행함 (메모리 이슈가 발생될 수 있음)
+    // - 데이터 Row 수가 변하지 않는 쿼리의 경우 fetch 조인 시 페이징이 가능
+    // default_batch_fetch_size 설정으로 in 조건으로 별도로 가져오도록 할 수 있음
+    
+    // fetch 조인을 여러개 사용시 데이터 정합성이 깨질 수 있음
+
 }

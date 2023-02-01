@@ -7,13 +7,19 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         show_sql: true
         format_sql: true
 
+        #LAZY(지연로딩) 시 in 조건으로 SQL 을 통합
+        #엔티티에서 적용할 객체에 @BatchSize(size = ?) 으로 직접 적용할 수 있음
+        # 1000 이 Maximum 값
+        default_batch_fetch_size: 100
+
 logging:
   level:
     org.hibernate.SQL: debug
+    #SQL에 바인딩되는 파라미터 로깅
     org.hibernate.type: trace

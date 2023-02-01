@@ -17,8 +17,8 @@ public class InitDb {
     private final InitService initService;
     @PostConstruct //스프링 빈이 모두 올라온 후 호출됨
     public void init() {
-        initService.dbInit1();
-        initService.dbInit2();
+        //initService.dbInit1();
+        //initService.dbInit2();
     }
 
     @Component

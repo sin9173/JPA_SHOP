@@ -2,6 +2,9 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+
+	//querydsl
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
 group = 'jpabook'
@@ -32,6 +35,39 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa
+	implementation 'com.querydsl:querydsl-jpa:5.0.0'
+
+	// https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
+	implementation 'com.querydsl:querydsl-apt:5.0.0'
+
+}
+
+//querydsl 추가
+def querydslDir = '$buildDir/generated/querydsl'
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
 }
 
 tasks.named('test') {

@@ -30,6 +30,9 @@ public class Order {
     //가급적 LAZY 를 사용 (양방향 연관관계가 있거나 불필요한 로딩이 많을 경우 문제가 발생)
     //ManyToOne 이나 OneToOne 의 경우 기본 fetch 전략이 EAGER 이므로 주의가 필요
     //LAZY 로 해둘 경우 new ByteBuddyInterceptor() 라는 프록시객체가 생성
+    // - 프록시 객체에서는 실제객체의 레퍼런스를 보관
+    // - 조회시 레퍼런스에 값이 없을 경우 영속성 컨텍스트에 요청
+    // - 영속성 컨텍스트에서 객체를 생성해준 후 레퍼런스에 값을 넣어줌 (프록시 객체를 초기화)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
